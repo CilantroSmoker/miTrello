@@ -1,0 +1,159 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap');
+
+* {
+    font-family: 'Montserrat', sans-serif;
+}
+
+:root {
+    --purple-dark:  #311b6b;
+    --purple-main:  #512da8;
+    --purple-mid:   #5c6bc0;
+    --purple-light: #ede7f6;
+    --bg:           #f3f0fa;
+    --text-dark:    #1a1a2e;
+    --text-mid:     #44475a;
+    --text-light:   #8880a0;
+    --white:        #ffffff;
+    --shadow:       0 4px 20px rgba(81, 45, 168, 0.12);
+}
+
+body {
+    background: var(--bg);
+    color: var(--text-dark);
+    min-height: 100vh;
+}
+
+/* ── NAVBAR ── */
+.navbar {
+    background: linear-gradient(to right, var(--purple-dark), var(--purple-main)) !important;
+    box-shadow: 0 2px 12px rgba(81, 45, 168, 0.3);
+    padding: 10px 24px;
+}
+
+.navbar-brand {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: white !important;
+    letter-spacing: 0.5px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.navbar-brand i {
+    font-size: 1.3rem;
+}
+
+.nav-link {
+    color: rgba(255, 255, 255, 0.85) !important;
+    font-size: 0.88rem;
+    font-weight: 500;
+    transition: color 0.2s;
+}
+
+.nav-link:hover {
+    color: white !important;
+}
+
+.btn-link.nav-link {
+    text-decoration: none;
+    padding: 0.5rem 1rem;
+}
+
+/* ── MAIN CONTENT ── */
+.main-content {
+    padding: 32px 24px;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+/* ── CARDS ── */
+.card {
+    border: none;
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 28px rgba(81, 45, 168, 0.18);
+}
+
+/* ── BUTTONS ── */
+.btn-purple {
+    background: linear-gradient(135deg, var(--purple-main), var(--purple-mid));
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.85rem;
+    letter-spacing: 0.3px;
+    padding: 8px 20px;
+    transition: all 0.2s;
+}
+
+.btn-purple:hover {
+    background: linear-gradient(135deg, var(--purple-dark), var(--purple-main));
+    color: white;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 14px rgba(81, 45, 168, 0.35);
+}
+
+.btn-outline-purple {
+    background: transparent;
+    color: var(--purple-main);
+    border: 1.5px solid var(--purple-main);
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.85rem;
+    padding: 8px 20px;
+    transition: all 0.2s;
+}
+
+.btn-outline-purple:hover {
+    background: var(--purple-main);
+    color: white;
+}
+
+/* ── PAGE TITLE ── */
+.page-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-dark);
+    margin-bottom: 4px;
+}
+
+.page-subtitle {
+    font-size: 0.85rem;
+    color: var(--text-light);
+    margin-bottom: 28px;
+}
+
+/* ── ALERTS ── */
+.alert {
+    border-radius: 10px;
+    border: none;
+    font-size: 0.88rem;
+}
+
+.navbar-nav .nav-link {
+    line-height: 1;
+    padding-top: 0;
+    padding-bottom: 0;
+}
+
+.navbar-nav {
+    align-items: center;
+}
+
+.navbar .nav-item {
+    display: flex;
+    align-items: center;
+}
+
+.navbar .btn-link.nav-link {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}

@@ -1,0 +1,143 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Perfil — MiTrello{% endblock %}
+
+{% block extra_styles %}
+<link rel="stylesheet" href="{% static 'css/perfil.css' %}">
+{% endblock %}
+
+{% block content %}
+
+{% if messages %}
+    {% for msg in messages %}
+        <div class="alert alert-success mb-4">{{ msg }}</div>
+    {% endfor %}
+{% endif %}
+
+<div class="perfil-layout">
+
+    <!-- ── SIDEBAR ── -->
+    <div class="perfil-sidebar">
+        <p class="sidebar-seccion-label">Configuración personal</p>
+        <a href="?seccion=perfil" class="sidebar-item {% if seccion == 'perfil' or not seccion %}active{% endif %}">
+            <i class="bi bi-person-circle"></i> Perfil y visibilidad
+        </a>
+        <a href="?seccion=actividad" class="sidebar-item {% if seccion == 'actividad' %}active{% endif %}">
+            <i class="bi bi-bar-chart-fill"></i> Actividad
+        </a>
+        <a href="?seccion=password" class="sidebar-item {% if seccion == 'password' %}active{% endif %}">
+            <i class="bi bi-lock-fill"></i> Cambiar contraseña
+        </a>
+    </div>
+
+    <!-- ── CONTENIDO ── -->
+    <div class="perfil-content">
+
+        <!-- SECCIÓN: Perfil y visibilidad -->
+        {% if seccion == 'perfil' or not seccion %}
+        <div class="perfil-card">
+            <h5 class="perfil-card-titulo">Perfil y visibilidad</h5>
+
+            <!-- Avatar -->
+            <div class="avatar-section">
+                <div class="avatar-wrap">
+                    {% if perfil.avatar %}
+                        <img src="{{ perfil.avatar.url }}" alt="Avatar" class="avatar-img">
+                    {% else %}
+                        <div class="avatar-placeholder">
+                            {{ request.user.username|first|upper }}
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="avatar-acciones">
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <input type="hidden" name="accion" value="avatar">
+                        <label class="btn btn-purple btn-sm" for="avatarInput">
+                            <i class="bi bi-camera me-1"></i> Cambiar foto
+                        </label>
+                        <input type="file" id="avatarInput" name="avatar"
+                               accept="image/*" style="display:none;"
+                               onchange="this.form.submit()">
+                    </form>
+                    {% if perfil.avatar %}
+                    <form method="post" style="display:inline;">
+                        {% csrf_token %}
+                        <input type="hidden" name="accion" value="eliminar_avatar">
+                        <button type="submit" class="btn btn-outline-danger btn-sm">
+                            <i class="bi bi-trash me-1"></i> Eliminar foto
+                        </button>
+                    </form>
+                    {% endif %}
+                </div>
+            </div>
+
+            <hr class="perfil-divider">
+
+            <!-- Info del usuario -->
+            <div class="info-row">
+                <span class="info-label"><i class="bi bi-person me-2"></i>Usuario</span>
+                <span class="info-valor">{{ request.user.username }}</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label"><i class="bi bi-envelope me-2"></i>Email</span>
+                <span class="info-valor">{{ request.user.email|default:"Sin email registrado" }}</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label"><i class="bi bi-calendar3 me-2"></i>Miembro desde</span>
+                <span class="info-valor">{{ request.user.date_joined|date:"d/m/Y" }}</span>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- SECCIÓN: Actividad -->
+        {% if seccion == 'actividad' %}
+        <div class="perfil-card">
+            <h5 class="perfil-card-titulo">Actividad</h5>
+            <div class="stat-grid">
+                <div class="stat-card">
+                    <span class="stat-numero">{{ total_tableros }}</span>
+                    <span class="stat-label">Tableros</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-numero">{{ total_listas }}</span>
+                    <span class="stat-label">Listas</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-numero">{{ total_tarjetas }}</span>
+                    <span class="stat-label">Tarjetas</span>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- SECCIÓN: Cambiar contraseña -->
+        {% if seccion == 'password' %}
+        <div class="perfil-card">
+            <h5 class="perfil-card-titulo">Cambiar contraseña</h5>
+            <form method="post" style="max-width: 420px;">
+                {% csrf_token %}
+                <input type="hidden" name="accion" value="password">
+                {% for field in password_form %}
+                    <div class="mb-3">
+                        <label class="perfil-label">{{ field.label }}</label>
+                        <input type="password"
+                               name="{{ field.html_name }}"
+                               class="perfil-input {% if field.errors %}is-invalid{% endif %}"
+                               placeholder="{{ field.label }}">
+                        {% for error in field.errors %}
+                            <div class="invalid-feedback">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                {% endfor %}
+                <button type="submit" class="btn btn-purple">
+                    <i class="bi bi-check-lg me-1"></i> Actualizar contraseña
+                </button>
+            </form>
+        </div>
+        {% endif %}
+
+    </div>
+</div>
+
+{% endblock %}

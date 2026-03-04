@@ -1,0 +1,186 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}{{ tablero.nombre }} — MiTrello{% endblock %}
+
+{% block extra_styles %}
+<link rel="stylesheet" href="{% static 'css/tablero.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<!-- Header -->
+<div class="tablero-header">
+    <div class="d-flex align-items-center gap-3">
+        <a href="{% url 'dashboard' %}" class="btn-back">
+            <i class="bi bi-arrow-left"></i>
+        </a>
+        <h1 class="tablero-title">{{ tablero.nombre }}</h1>
+    </div>
+    <button class="btn btn-purple" data-bs-toggle="modal" data-bs-target="#modalNuevaLista">
+        <i class="bi bi-plus-lg me-1"></i> Nueva lista
+    </button>
+</div>
+
+<!-- Columnas -->
+<div class="tablero-board">
+    {% for lista in listas %}
+    <div class="lista-col" id="lista-{{ lista.pk }}">
+
+        <div class="lista-header">
+            <span class="lista-nombre">{{ lista.nombre }}</span>
+            <form method="post" action="{% url 'eliminar_lista' lista.pk %}" class="form-eliminar-lista">
+                {% csrf_token %}
+                <button type="submit" class="btn-eliminar-lista" title="Eliminar lista">
+                    <i class="bi bi-x"></i>
+                </button>
+            </form>
+        </div>
+
+        <div class="tarjetas-container" data-lista-id="{{ lista.pk }}">
+            {% for tarjeta in lista.tarjetas.all %}
+            <div class="tarjeta"
+                 draggable="true"
+                 data-tarjeta-id="{{ tarjeta.pk }}"
+                 data-detalle-url="/tarjeta/{{ tarjeta.pk }}/detalle/"
+                 data-editar-url="/tarjeta/{{ tarjeta.pk }}/editar/">
+                <span class="tarjeta-titulo">{{ tarjeta.titulo }}</span>
+                <form method="post" action="{% url 'eliminar_tarjeta' tarjeta.pk %}"
+                      class="form-eliminar-tarjeta">
+                    {% csrf_token %}
+                    <button type="submit" class="btn-eliminar-tarjeta" title="Eliminar">
+                        <i class="bi bi-x"></i>
+                    </button>
+                </form>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="agregar-tarjeta-wrap">
+            <button class="btn-agregar-tarjeta">
+                <i class="bi bi-plus"></i> Añadir tarjeta
+            </button>
+            <form method="post" action="{% url 'crear_tarjeta' lista.pk %}"
+                  class="form-nueva-tarjeta" style="display:none;">
+                {% csrf_token %}
+                <input type="text" name="titulo" class="input-tarjeta"
+                       placeholder="Título de la tarjeta..." required>
+                <div class="d-flex gap-2 mt-2">
+                    <button type="submit" class="btn btn-purple btn-sm">Añadir</button>
+                    <button type="button" class="btn btn-outline-secondary btn-sm btn-cancelar">Cancelar</button>
+                </div>
+            </form>
+        </div>
+
+    </div>
+    {% endfor %}
+
+    <div class="lista-col lista-nueva-placeholder"
+         data-bs-toggle="modal" data-bs-target="#modalNuevaLista">
+        <i class="bi bi-plus-lg me-2"></i> Añadir otra lista
+    </div>
+</div>
+
+
+<!-- ── MODAL DETALLE TARJETA ── -->
+<div class="modal fade" id="modalTarjeta" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content tarjeta-modal-content">
+            <div class="modal-header border-0 pb-0">
+                <div class="tarjeta-modal-lista">
+                    <i class="bi bi-list-ul me-1"></i>
+                    <span id="modalListaNombre"></span>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body pt-2">
+                <div class="row g-4">
+                    <!-- Columna principal -->
+                    <div class="col-12 col-md-8">
+                        <!-- Título editable -->
+                        <div class="tarjeta-modal-titulo-wrap">
+                            <i class="bi bi-card-heading tarjeta-modal-icon"></i>
+                            <input type="text" id="modalTitulo"
+                                   class="tarjeta-modal-titulo" placeholder="Título...">
+                        </div>
+
+                        <!-- Descripción -->
+                        <div class="tarjeta-modal-seccion">
+                            <div class="tarjeta-modal-seccion-header">
+                                <i class="bi bi-justify-left tarjeta-modal-icon"></i>
+                                <span class="tarjeta-modal-seccion-titulo">Descripción</span>
+                                <button class="btn-editar-desc" id="btnEditarDesc">Editar</button>
+                            </div>
+
+                            <!-- Vista descripción -->
+                            <div id="descVista" class="tarjeta-modal-desc-vista"></div>
+
+                            <!-- Editor descripción -->
+                            <div id="descEditor" style="display:none;">
+                                <textarea id="modalDescripcion"
+                                          class="tarjeta-modal-textarea"
+                                          placeholder="Añade una descripción más detallada..."></textarea>
+                                <div class="d-flex gap-2 mt-2">
+                                    <button class="btn btn-purple btn-sm" id="btnGuardar">
+                                        <i class="bi bi-check me-1"></i> Guardar
+                                    </button>
+                                    <button class="btn btn-outline-secondary btn-sm" id="btnCancelarDesc">
+                                        Cancelar
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Columna lateral -->
+                    <div class="col-12 col-md-4">
+                        <div class="tarjeta-modal-meta">
+                            <p class="tarjeta-modal-meta-label">
+                                <i class="bi bi-calendar3 me-1"></i> Creado el
+                            </p>
+                            <p class="tarjeta-modal-meta-valor" id="modalCreadoEn"></p>
+                        </div>
+
+                        <!-- Eliminar desde modal -->
+                        <button class="btn btn-outline-danger btn-sm w-100 mt-3"
+                                id="btnEliminarDesdeModal">
+                            <i class="bi bi-trash me-1"></i> Eliminar tarjeta
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Modal nueva lista -->
+<div class="modal fade" id="modalNuevaLista" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="border-radius:16px; border:none;">
+            <div class="modal-header border-0 pb-0">
+                <h5 class="modal-title fw-bold">Nueva lista</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form method="post" action="{% url 'crear_lista' tablero.pk %}">
+                    {% csrf_token %}
+                    <label class="form-label" style="font-size:0.85rem; font-weight:600; color:#44475a;">
+                        Nombre de la lista
+                    </label>
+                    <input type="text" name="nombre" class="form-control mb-3"
+                           placeholder="Ej: Por hacer, En progreso, Listo..."
+                           required autofocus>
+                    <button type="submit" class="btn btn-purple w-100">
+                        <i class="bi bi-plus-lg me-1"></i> Crear lista
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="{% static 'js/tablero.js' %}"></script>
+{% endblock %}

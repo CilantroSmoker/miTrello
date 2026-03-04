@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Dashboard — MiTrello{% endblock %}
+
+{% block extra_styles %}
+<link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<div class="d-flex align-items-center justify-content-between mb-2">
+    <div>
+        <h1 class="page-title">Mis tableros</h1>
+        <p class="page-subtitle">Bienvenido, <strong>{{ user.username }}</strong> — aquí están todos tus proyectos</p>
+    </div>
+    <button class="btn btn-purple" data-bs-toggle="modal" data-bs-target="#modalNuevoTablero">
+        <i class="bi bi-plus-lg me-1"></i> Nuevo tablero
+    </button>
+</div>
+
+{% if tableros %}
+    <div class="row g-3">
+        {% for t in tableros %}
+        <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+            <div class="card h-100" data-url="{% url 'tablero' t.pk %}">
+                <div class="card-header-bg"></div>
+                <div class="card-body">
+                    <h5 class="card-title">{{ t.nombre }}</h5>
+                    <p class="card-meta">
+                        {{ t.listas.count }} lista{{ t.listas.count|pluralize }} ·
+                        creado {{ t.creado_en|date:"d/m/Y" }}
+                    </p>
+                </div>
+                <div class="card-footer bg-transparent border-0 pt-0 pb-3 px-3">
+                    <form method="post" action="{% url 'eliminar_tablero' t.pk %}"
+                          class="form-eliminar">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-sm btn-outline-danger w-100">
+                            <i class="bi bi-trash me-1"></i> Eliminar
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+{% else %}
+    <div class="empty-state">
+        <i class="bi bi-trello"></i>
+        <h4>No tienes tableros todavía</h4>
+        <p>Crea tu primer tablero para empezar a organizar tus tareas</p>
+        <button class="btn btn-purple mt-2" data-bs-toggle="modal" data-bs-target="#modalNuevoTablero">
+            <i class="bi bi-plus-lg me-1"></i> Crear primer tablero
+        </button>
+    </div>
+{% endif %}
+
+
+<!-- Modal nuevo tablero -->
+<div class="modal fade" id="modalNuevoTablero" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header border-0 pb-0">
+                <h5 class="modal-title fw-bold">Nuevo tablero</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form method="post" action="{% url 'crear_tablero' %}">
+                    {% csrf_token %}
+                    <label class="form-label">Nombre del tablero</label>
+                    <input type="text" name="nombre" class="form-control mb-3"
+                           placeholder="Ej: Proyecto Web, Tareas personales..."
+                           required autofocus>
+                    <button type="submit" class="btn btn-purple w-100">
+                        <i class="bi bi-plus-lg me-1"></i> Crear tablero
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="{% static 'js/dashboard.js' %}"></script>
+{% endblock %}

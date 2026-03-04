@@ -1,0 +1,215 @@
+.perfil-layout {
+    display: flex;
+    gap: 28px;
+    align-items: flex-start;
+}
+
+/* ── SIDEBAR ── */
+.perfil-sidebar {
+    width: 220px;
+    min-width: 220px;
+    background: white;
+    border-radius: 16px;
+    padding: 16px 12px;
+    box-shadow: 0 4px 20px rgba(81, 45, 168, 0.10);
+}
+
+.sidebar-seccion-label {
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: #8880a0;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    padding: 0 10px;
+    margin-bottom: 8px;
+}
+
+.sidebar-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 12px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: #44475a;
+    text-decoration: none;
+    transition: all 0.2s;
+    margin-bottom: 2px;
+}
+
+.sidebar-item:hover {
+    background: #f3f0fa;
+    color: #512da8;
+}
+
+.sidebar-item.active {
+    background: #ede7f6;
+    color: #512da8;
+    font-weight: 700;
+}
+
+/* ── CONTENT ── */
+.perfil-content {
+    flex: 1;
+}
+
+.perfil-card {
+    background: white;
+    border-radius: 16px;
+    padding: 28px;
+    box-shadow: 0 4px 20px rgba(81, 45, 168, 0.10);
+}
+
+.perfil-card-titulo {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #1a1a2e;
+    margin-bottom: 24px;
+    padding-bottom: 14px;
+    border-bottom: 1.5px solid #ede7f6;
+}
+
+/* ── AVATAR ── */
+.avatar-section {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    margin-bottom: 24px;
+}
+
+.avatar-wrap {
+    flex-shrink: 0;
+}
+
+.avatar-img {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #ede7f6;
+    box-shadow: 0 4px 12px rgba(81, 45, 168, 0.15);
+}
+
+.avatar-placeholder {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #512da8, #5c6bc0);
+    color: white;
+    font-size: 2rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(81, 45, 168, 0.25);
+}
+
+.avatar-acciones {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+/* ── INFO ROWS ── */
+.perfil-divider {
+    border-color: #ede7f6;
+    margin: 20px 0;
+}
+
+.info-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 0;
+    border-bottom: 1px solid #f3f0fa;
+}
+
+.info-row:last-child { border-bottom: none; }
+
+.info-label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #8880a0;
+}
+
+.info-valor {
+    font-size: 0.88rem;
+    font-weight: 500;
+    color: #1a1a2e;
+}
+
+/* ── ESTADÍSTICAS ── */
+.stat-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+}
+
+.stat-card {
+    background: #f3f0fa;
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.stat-numero {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #512da8;
+    line-height: 1;
+}
+
+.stat-label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #8880a0;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+/* ── FORM CONTRASEÑA ── */
+.perfil-label {
+    display: block;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: #44475a;
+    margin-bottom: 6px;
+}
+
+.perfil-input {
+    width: 100%;
+    padding: 11px 14px;
+    border: 1.5px solid #dde3ed;
+    border-radius: 10px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.88rem;
+    color: #1a1a2e;
+    background: #f8f5ff;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.perfil-input:focus {
+    border-color: #512da8;
+    background: white;
+    box-shadow: 0 0 0 3px rgba(81, 45, 168, 0.1);
+}
+
+.perfil-input.is-invalid { border-color: #e53e3e; }
+
+.invalid-feedback {
+    font-size: 0.76rem;
+    color: #e53e3e;
+    margin-top: 4px;
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 640px) {
+    .perfil-layout { flex-direction: column; }
+    .perfil-sidebar { width: 100%; }
+    .stat-grid { grid-template-columns: repeat(2, 1fr); }
+}

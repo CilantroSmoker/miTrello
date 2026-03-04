@@ -1,0 +1,66 @@
+.card {
+    cursor: pointer;
+}
+
+.card-header-bg {
+    height: 80px;
+    background: linear-gradient(135deg, #311b6b, #5c6bc0);
+    border-radius: 12px 12px 0 0;
+}
+
+.card-title {
+    font-size: 0.95rem;
+    font-weight: 700;
+    margin-bottom: 4px;
+    color: #1a1a2e;
+}
+
+.card-meta {
+    font-size: 0.78rem;
+    color: #8880a0;
+    margin: 0;
+}
+
+.modal-content {
+    border-radius: 16px;
+    border: none;
+}
+
+.form-label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #44475a;
+}
+
+.form-control {
+    border-radius: 8px;
+    font-size: 0.9rem;
+    border: 1.5px solid #ddd;
+}
+
+.form-control:focus {
+    border-color: #512da8;
+    box-shadow: 0 0 0 3px rgba(81, 45, 168, 0.1);
+}
+
+.empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    margin-top: 20px;
+}
+
+.empty-state i {
+    font-size: 3.5rem;
+    color: #c4b5e8;
+}
+
+.empty-state h4 {
+    color: #8880a0;
+    font-weight: 600;
+    margin-top: 16px;
+}
+
+.empty-state p {
+    color: #b0a8c8;
+    font-size: 0.88rem;
+}
