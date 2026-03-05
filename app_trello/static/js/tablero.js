@@ -306,4 +306,62 @@ document.addEventListener('DOMContentLoaded', () => {
         return value;
     }
 
+    // ── FONDOS DE TABLERO ─────────────────────
+    const tableroRoot = document.getElementById("tableroRoot");
+    const modalFondoEl = document.getElementById("modalFondo");
+
+    function aplicarBackground(key) {
+
+        if (!tableroRoot) return;
+
+        tableroRoot.classList.remove(
+            "bg-grad-1","bg-grad-2","bg-grad-3",
+            "bg-solid-1","bg-solid-2","bg-solid-3"
+        );
+
+        if (key) {
+            tableroRoot.classList.add(`bg-${key}`);
+        }
+    }
+
+
+    // aplicar fondo al cargar la página
+    if (tableroRoot) {
+        aplicarBackground(tableroRoot.dataset.background || "");
+    }
+
+
+    // click en los botones del modal
+    document.querySelectorAll(".bg-opt").forEach(btn => {
+
+        btn.addEventListener("click", async () => {
+
+            const key = btn.dataset.background || "";
+
+            aplicarBackground(key);
+
+            const res = await fetch(`/tablero/${tableroRoot.dataset.tableroId}/fondo/`, {
+                method: "POST",
+                headers: {
+                    "Content-Type":"application/json",
+                    "X-CSRFToken": csrfToken
+                },
+                body: JSON.stringify({
+                    background:key
+                })
+            });
+
+            const data = await res.json();
+
+            if(data.ok){
+                tableroRoot.dataset.background = data.background;
+            }
+
+            const modal = bootstrap.Modal.getInstance(modalFondoEl);
+            if(modal) modal.hide();
+
+        });
+
+    });
+
 });

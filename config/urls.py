@@ -1,3 +1,4 @@
+from django import views
 from django.contrib import admin
 from django.urls import path, include
 from django.shortcuts import redirect
@@ -34,6 +35,10 @@ urlpatterns = [
     path('tablero/<int:tablero_pk>/lista/crear/', crear_lista, name='crear_lista'),
     path('lista/<int:pk>/eliminar/', eliminar_lista, name='eliminar_lista'),
 
+    #tableros
+    path("tablero/<int:pk>/portada/subir/", views.tablero_portada_subir, name="tablero_portada_subir"),
+    path("tablero/<int:pk>/portada/preset/", views.tablero_portada_preset, name="tablero_portada_preset"),
+    path("tablero/<int:pk>/portada/eliminar/", views.tablero_portada_eliminar, name="tablero_portada_eliminar"),
     # Tarjetas
     path('lista/<int:lista_pk>/tarjeta/crear/', crear_tarjeta, name='crear_tarjeta'),
     path('tarjeta/<int:pk>/eliminar/', eliminar_tarjeta, name='eliminar_tarjeta'),

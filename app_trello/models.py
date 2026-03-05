@@ -5,9 +5,10 @@ from django.dispatch import receiver
 
 
 class Tablero(models.Model):
-    nombre = models.CharField(max_length=100)
-    descripcion = models.TextField(blank=True)
-    propietario = models.ForeignKey(User, on_delete=models.CASCADE, related_name='tableros')
+    nombre = models.CharField(max_length=120)
+    propietario = models.ForeignKey(User, on_delete=models.CASCADE, related_name="tableros")
+    portada = models.ImageField(upload_to="tableros/portadas/", blank=True, null=True)
+    portada_preset = models.CharField(max_length=60, blank=True, default="")
     creado_en = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

@@ -70,6 +70,51 @@ def tablero(request, pk):
     return render(request, 'tablero.html', {'tablero': t, 'listas': listas})
 
 
+# ── FONDO / PORTADA DE TABLERO ─────────────────────────
+
+@login_required
+@require_POST
+def tablero_portada_subir(request, pk):
+    t = get_object_or_404(Tablero, pk=pk, propietario=request.user)
+    if "portada" in request.FILES:
+        # si había preset, lo limpias
+        t.portada_preset = ""
+        t.portada = request.FILES["portada"]
+        t.save()
+    return redirect("tablero", pk=pk)
+
+
+@login_required
+@require_POST
+def tablero_portada_preset(request, pk):
+    t = get_object_or_404(Tablero, pk=pk, propietario=request.user)
+    preset = request.POST.get("preset", "").strip()
+
+    permitidos = {"preset-1", "preset-2", "preset-3"}  # pon los que uses
+    if preset not in permitidos:
+        return redirect("tablero", pk=pk)
+
+    # si había imagen subida, la borras
+    if t.portada:
+        t.portada.delete(save=False)
+        t.portada = None
+
+    t.portada_preset = preset
+    t.save()
+    return redirect("tablero", pk=pk)
+
+
+@login_required
+@require_POST
+def tablero_portada_eliminar(request, pk):
+    t = get_object_or_404(Tablero, pk=pk, propietario=request.user)
+    if t.portada:
+        t.portada.delete(save=False)
+        t.portada = None
+    t.portada_preset = ""
+    t.save()
+    return redirect("tablero", pk=pk)
+
 # ── LISTAS ────────────────────────────────
 
 @login_required
