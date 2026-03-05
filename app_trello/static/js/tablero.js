@@ -21,23 +21,64 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // ── ELIMINAR LISTA ──────────────────────────
-    document.querySelectorAll('.form-eliminar-lista').forEach(form => {
+    // ── MODAL CONFIRMACIÓN ELIMINAR (lista / tarjeta) ─────────────
+    const confirmEl = document.getElementById('modalConfirmEliminar');
+    const btnConfirmEliminar = document.getElementById('btnConfirmEliminar');
+    const tituloEliminar = document.getElementById('tituloEliminar');
+    const textoEliminar  = document.getElementById('textoEliminar');
+
+    let formPendiente = null;
+
+    // Si el modal no existe en este template, no rompemos nada
+    const confirmModal = (confirmEl && btnConfirmEliminar) ? new bootstrap.Modal(confirmEl) : null;
+
+    // Interceptar todos los forms marcados con .form-eliminar-confirm
+    document.querySelectorAll('.form-eliminar-confirm').forEach(form => {
+
+        // Evitar que el click suba a la tarjeta o a contenedores (importante para click/drag)
+        form.addEventListener('click', e => e.stopPropagation());
+
+        // Extra: evita iniciar drag cuando apretas la X
+        form.addEventListener('mousedown', e => e.stopPropagation());
+
         form.addEventListener('submit', e => {
-            if (!confirm('¿Eliminar esta lista y todas sus tarjetas?')) {
-                e.preventDefault();
+            e.preventDefault();
+            e.stopPropagation();
+
+            // Si no hay modal por alguna razón, fallback a confirm nativo (no te deja botado)
+            if (!confirmModal) {
+                if (confirm('¿Eliminar? Esta acción no se puede deshacer.')) form.submit();
+                return;
             }
+
+            formPendiente = form;
+
+            const tipo = form.dataset.tipo || 'elemento';
+            const nombre = form.dataset.nombre || '';
+
+            if (tituloEliminar) tituloEliminar.textContent = `Eliminar ${tipo}`;
+            if (textoEliminar) {
+                textoEliminar.textContent = nombre
+                    ? `¿Eliminar ${tipo} "${nombre}"?`
+                    : `¿Eliminar este ${tipo}?`;
+            }
+
+            confirmModal.show();
         });
     });
 
-    // ── ELIMINAR TARJETA (botón X en la card) ───
-    document.querySelectorAll('.form-eliminar-tarjeta').forEach(form => {
-        form.addEventListener('click', e => e.stopPropagation());
-        form.addEventListener('submit', e => {
-            e.stopPropagation();
-            if (!confirm('¿Eliminar esta tarjeta?')) e.preventDefault();
+    if (confirmEl && btnConfirmEliminar) {
+        btnConfirmEliminar.addEventListener('click', () => {
+            if (formPendiente) formPendiente.submit();
         });
-    });
+
+        confirmEl.addEventListener('hidden.bs.modal', () => {
+            formPendiente = null;
+        });
+
+        // Evitar propagación dentro del modal
+        confirmEl.addEventListener('click', e => e.stopPropagation());
+    }
 
     // ── MODAL DETALLE TARJETA ───────────────────
     const modalEl       = document.getElementById('modalTarjeta');
@@ -52,6 +93,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnGuardar    = document.getElementById('btnGuardar');
     const btnCancelarDesc = document.getElementById('btnCancelarDesc');
     const btnEliminar   = document.getElementById('btnEliminarDesdeModal');
+
     // Evitar que clicks dentro del modal propaguen a la tarjeta
     modalEl.addEventListener('click', e => e.stopPropagation());
 
@@ -152,15 +194,37 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Eliminar desde modal
+    // Eliminar desde modal (usa el MISMO modal de confirmación bonito)
     btnEliminar.addEventListener('click', () => {
-        if (!confirm('¿Eliminar esta tarjeta?')) return;
         const card = document.querySelector(`.tarjeta[data-tarjeta-id="${tarjetaActualId}"]`);
-        if (card) {
-            const form = card.querySelector('.form-eliminar-tarjeta');
-            modal.hide();
-            form.submit();
+        if (!card) return;
+
+        const form = card.querySelector('.form-eliminar-confirm'); // ← importante
+        if (!form) return;
+
+        // Cierra el modal de detalle
+        modal.hide();
+
+        // Si existe el modal bonito, lo usamos
+        if (confirmModal) {
+            formPendiente = form;
+
+            const tipo = form.dataset.tipo || 'tarjeta';
+            const nombre = form.dataset.nombre || '';
+
+            if (tituloEliminar) tituloEliminar.textContent = `Eliminar ${tipo}`;
+            if (textoEliminar) {
+                textoEliminar.textContent = nombre
+                    ? `¿Eliminar ${tipo} "${nombre}"?`
+                    : `¿Eliminar esta ${tipo}?`;
+            }
+
+            confirmModal.show();
+            return;
         }
+
+        // Fallback
+        if (confirm('¿Eliminar esta tarjeta?')) form.submit();
     });
 
     // ── DRAG & DROP ─────────────────────────────
