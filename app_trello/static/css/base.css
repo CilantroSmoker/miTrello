@@ -25,6 +25,8 @@ body {
 
 /* ── NAVBAR ── */
 .navbar {
+    position: relative;
+    z-index: 3000;
     background: linear-gradient(to right, var(--purple-dark), var(--purple-main)) !important;
     box-shadow: 0 2px 12px rgba(81, 45, 168, 0.3);
     padding: 10px 24px;
