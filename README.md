@@ -1,8 +1,8 @@
-# MiTrello 🟣
+# MiTrello 
 
 Clon de Trello construido con Django. Permite gestionar tableros, listas y tarjetas con drag & drop, perfiles de usuario y autenticación completa.
 
-## 🚀 Características
+##  Características
 
 - Autenticación — registro, login y logout
 - Tableros — crear y eliminar tableros personales
@@ -11,7 +11,7 @@ Clon de Trello construido con Django. Permite gestionar tableros, listas y tarje
 - Detalle de tarjeta — modal con título y descripción editables
 - Perfil de usuario — foto de perfil, estadísticas y cambio de contraseña
 
-## 🛠️ Tecnologías
+##  Tecnologías
 
 - Python 3.12
 - Django 4.x
@@ -19,7 +19,7 @@ Clon de Trello construido con Django. Permite gestionar tableros, listas y tarje
 - Bootstrap 5
 - JavaScript vanilla (drag & drop, fetch API)
 
-## ⚙️ Instalación
+##  Instalación
 
 ### 1. Clonar el repositorio
 
@@ -67,7 +67,7 @@ python manage.py runserver
 
 Abre http://127.0.0.1:8000 en tu navegador.
 
-## 📁 Estructura del proyecto
+##  Estructura del proyecto
 
 ```
 mitrello/
@@ -99,7 +99,7 @@ mitrello/
 └── README.md
 ```
 
-## 📦 Dependencias principales
+##  Dependencias principales
 
 | Paquete | Uso |
 |--------|-----|

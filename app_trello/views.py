@@ -173,12 +173,13 @@ def perfil(request):
     if request.method == 'POST':
         accion = request.POST.get('accion')
 
+        # ── Avatar ──
         if accion == 'avatar':
             if 'avatar' in request.FILES:
                 perfil_obj.avatar = request.FILES['avatar']
                 perfil_obj.save()
                 messages.success(request, 'Foto de perfil actualizada.')
-            return redirect(f'/perfil/?seccion=perfil')
+            return redirect('/perfil/?seccion=perfil')
 
         if accion == 'eliminar_avatar':
             if perfil_obj.avatar:
@@ -186,6 +187,38 @@ def perfil(request):
                 messages.success(request, 'Foto de perfil eliminada.')
             return redirect('/perfil/?seccion=perfil')
 
+        # ── Portada imagen propia ──
+        if accion == 'portada':
+            if 'portada' in request.FILES:
+                perfil_obj.portada = request.FILES['portada']
+                perfil_obj.portada_preset = ''
+                perfil_obj.save()
+                messages.success(request, 'Portada actualizada.')
+            return redirect('/perfil/?seccion=perfil')
+
+        # ── Portada preset ──
+        if accion == 'portada_preset':
+            preset = request.POST.get('preset', '')
+            if preset:
+                if perfil_obj.portada:
+                    perfil_obj.portada.delete(save=False)
+                    perfil_obj.portada = None
+                perfil_obj.portada_preset = preset
+                perfil_obj.save()
+                messages.success(request, 'Portada actualizada.')
+            return redirect('/perfil/?seccion=perfil')
+
+        # ── Eliminar portada ──
+        if accion == 'eliminar_portada':
+            if perfil_obj.portada:
+                perfil_obj.portada.delete(save=False)
+                perfil_obj.portada = None
+            perfil_obj.portada_preset = ''
+            perfil_obj.save()
+            messages.success(request, 'Portada eliminada.')
+            return redirect('/perfil/?seccion=perfil')
+
+        # ── Contraseña ──
         if accion == 'password':
             password_form = PasswordChangeForm(request.user, request.POST)
             if password_form.is_valid():

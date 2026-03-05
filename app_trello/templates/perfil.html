@@ -10,7 +10,7 @@
 
 {% if messages %}
     {% for msg in messages %}
-        <div class="alert alert-success mb-4">{{ msg }}</div>
+        <div class="alert alert-success mb-3">{{ msg }}</div>
     {% endfor %}
 {% endif %}
 
@@ -35,12 +35,32 @@
 
         <!-- SECCIÓN: Perfil y visibilidad -->
         {% if seccion == 'perfil' or not seccion %}
-        <div class="perfil-card">
-            <h5 class="perfil-card-titulo">Perfil y visibilidad</h5>
+        <div class="perfil-card perfil-card--banner">
+            <!-- BANNER -->
+            <div class="banner-wrap" id="bannerWrap">
+                {% if perfil.portada %}
+                    <img src="{{ perfil.portada.url }}" alt="Portada" class="banner-img">
+                {% elif perfil.portada_preset %}
+                    {% if perfil.portada_preset == 'preset-red' %}
+                        <div class="banner-img portada-img" data-bg="{% static 'img/portadas/banner_red.png' %}"></div>
+                    {% elif perfil.portada_preset == 'preset-blue' %}
+                        <div class="banner-img portada-img" data-bg="{% static 'img/portadas/banner_blue.png' %}"></div>
+                    {% elif perfil.portada_preset == 'preset-green' %}
+                        <div class="banner-img portada-img" data-bg="{% static 'img/portadas/banner_green.png' %}"></div>
+                    {% else %}
+                        <div class="banner-img banner-preset {{ perfil.portada_preset }}"></div>
+                    {% endif %}
+                {% else %}
+                    <div class="banner-img banner-preset preset-default"></div>
+                {% endif %}
+                <div class="banner-overlay" id="bannerOverlay">
+                    <i class="bi bi-camera-fill"></i> Cambiar portada
+                </div>
+            </div>
 
-            <!-- Avatar -->
-            <div class="avatar-section">
-                <div class="avatar-wrap">
+            <!-- AVATAR sobresaliendo del banner -->
+            <div class="avatar-float-wrap">
+                <div class="avatar-wrap" id="avatarWrap">
                     {% if perfil.avatar %}
                         <img src="{{ perfil.avatar.url }}" alt="Avatar" class="avatar-img">
                     {% else %}
@@ -48,45 +68,29 @@
                             {{ request.user.username|first|upper }}
                         </div>
                     {% endif %}
-                </div>
-                <div class="avatar-acciones">
-                    <form method="post" enctype="multipart/form-data">
-                        {% csrf_token %}
-                        <input type="hidden" name="accion" value="avatar">
-                        <label class="btn btn-purple btn-sm" for="avatarInput">
-                            <i class="bi bi-camera me-1"></i> Cambiar foto
-                        </label>
-                        <input type="file" id="avatarInput" name="avatar"
-                               accept="image/*" style="display:none;"
-                               onchange="this.form.submit()">
-                    </form>
-                    {% if perfil.avatar %}
-                    <form method="post" style="display:inline;">
-                        {% csrf_token %}
-                        <input type="hidden" name="accion" value="eliminar_avatar">
-                        <button type="submit" class="btn btn-outline-danger btn-sm">
-                            <i class="bi bi-trash me-1"></i> Eliminar foto
-                        </button>
-                    </form>
-                    {% endif %}
+                    <div class="avatar-overlay">
+                        <i class="bi bi-camera-fill"></i>
+                    </div>
                 </div>
             </div>
 
-            <hr class="perfil-divider">
+            <!-- Info debajo del banner -->
+            <div class="perfil-info-wrap">
+                <hr class="perfil-divider">
+                <div class="info-row">
+                    <span class="info-label"><i class="bi bi-person me-2"></i>Usuario</span>
+                    <span class="info-valor">{{ request.user.username }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label"><i class="bi bi-envelope me-2"></i>Email</span>
+                    <span class="info-valor">{{ request.user.email|default:"Sin email registrado" }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label"><i class="bi bi-calendar3 me-2"></i>Miembro desde</span>
+                    <span class="info-valor">{{ request.user.date_joined|date:"d/m/Y" }}</span>
+                </div>
+            </div>
 
-            <!-- Info del usuario -->
-            <div class="info-row">
-                <span class="info-label"><i class="bi bi-person me-2"></i>Usuario</span>
-                <span class="info-valor">{{ request.user.username }}</span>
-            </div>
-            <div class="info-row">
-                <span class="info-label"><i class="bi bi-envelope me-2"></i>Email</span>
-                <span class="info-valor">{{ request.user.email|default:"Sin email registrado" }}</span>
-            </div>
-            <div class="info-row">
-                <span class="info-label"><i class="bi bi-calendar3 me-2"></i>Miembro desde</span>
-                <span class="info-valor">{{ request.user.date_joined|date:"d/m/Y" }}</span>
-            </div>
         </div>
         {% endif %}
 
@@ -140,4 +144,144 @@
     </div>
 </div>
 
+
+<!-- ── MODAL AVATAR ── -->
+<div class="modal fade" id="modalAvatar" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered" style="max-width:400px;">
+        <div class="modal-content" style="border-radius:16px; border:none;">
+            <div class="modal-header border-0">
+                <h5 class="modal-title fw-bold" style="font-size:1rem;">Foto del perfil</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body text-center py-3">
+                <div class="avatar-modal-preview">
+                    {% if perfil.avatar %}
+                        <img src="{{ perfil.avatar.url }}" alt="Avatar" class="avatar-modal-img">
+                    {% else %}
+                        <div class="avatar-modal-placeholder">
+                            {{ request.user.username|first|upper }}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="modal-footer border-0 justify-content-center gap-3 pt-0 pb-4">
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <input type="hidden" name="accion" value="avatar">
+                    <label class="btn-avatar-accion" for="avatarInputModal">
+                        <i class="bi bi-camera-fill"></i>
+                        <span>Actualizar foto</span>
+                    </label>
+                    <input type="file" id="avatarInputModal" name="avatar"
+                           accept="image/*" style="display:none;"
+                           onchange="this.form.submit()">
+                </form>
+                {% if perfil.avatar %}
+                <form method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="accion" value="eliminar_avatar">
+                    <button type="submit" class="btn-avatar-accion eliminar">
+                        <i class="bi bi-trash-fill"></i>
+                        <span>Eliminar</span>
+                    </button>
+                </form>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- ── MODAL PORTADA ── -->
+<div class="modal fade" id="modalPortada" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content" style="border-radius:16px; border:none;">
+            <div class="modal-header border-0">
+                <h5 class="modal-title fw-bold" style="font-size:1rem;">Cambiar portada</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+
+                <!-- Plantillas predefinidas -->
+                <p class="portada-seccion-label">Plantillas</p>
+                <div class="portada-grid">
+
+                    <!-- 3 gradientes CSS -->
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <input type="hidden" name="accion" value="portada_preset">
+                        <input type="hidden" name="preset" value="preset-purple">
+                        <button type="submit" class="portada-opcion preset-purple" title="Morado"></button>
+                    </form>
+                    <form method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="accion" value="portada_preset">
+                        <input type="hidden" name="preset" value="preset-ocean">
+                        <button type="submit" class="portada-opcion preset-ocean" title="Océano"></button>
+                    </form>
+                    <form method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="accion" value="portada_preset">
+                        <input type="hidden" name="preset" value="preset-sunset">
+                        <button type="submit" class="portada-opcion preset-sunset" title="Atardecer"></button>
+                    </form>
+
+                    <!-- 3 imágenes propias -->
+                    <form method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="accion" value="portada_preset">
+                        <input type="hidden" name="preset" value="preset-red">
+                        <button type="submit" class="portada-opcion portada-img"
+                                data-bg="{% static 'img/portadas/banner_red.png' %}"></button>
+                    </form>
+                    <form method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="accion" value="portada_preset">
+                        <input type="hidden" name="preset" value="preset-blue">
+                        <button type="submit" class="portada-opcion portada-img"
+                                data-bg="{% static 'img/portadas/banner_blue.png' %}"></button>
+                    </form>
+                    <form method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="accion" value="portada_preset">
+                        <input type="hidden" name="preset" value="preset-green">
+                        <button type="submit" class="portada-opcion portada-img"
+                                data-bg="{% static 'img/portadas/banner_green.png' %}"></button>
+                    </form>
+
+                </div>
+
+                <!-- Subir imagen propia -->
+                <p class="portada-seccion-label mt-4">Subir imagen propia</p>
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <input type="hidden" name="accion" value="portada">
+                    <label class="btn btn-purple btn-sm" for="portadaInput">
+                        <i class="bi bi-upload me-1"></i> Elegir imagen
+                    </label>
+                    <input type="file" id="portadaInput" name="portada"
+                           accept="image/*" style="display:none;"
+                           onchange="this.form.submit()">
+                </form>
+
+                <!-- Eliminar portada -->
+                {% if perfil.portada or perfil.portada_preset %}
+                <form method="post" class="mt-3">
+                    {% csrf_token %}
+                    <input type="hidden" name="accion" value="eliminar_portada">
+                    <button type="submit" class="btn btn-outline-danger btn-sm">
+                        <i class="bi bi-trash me-1"></i> Eliminar portada
+                    </button>
+                </form>
+                {% endif %}
+
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="{% static 'js/perfil.js' %}"></script>
 {% endblock %}

@@ -43,10 +43,11 @@ class Tarjeta(models.Model):
 class Perfil(models.Model):
     usuario = models.OneToOneField(User, on_delete=models.CASCADE, related_name='perfil')
     avatar = models.ImageField(upload_to='avatars/', blank=True, null=True)
+    portada = models.ImageField(upload_to='portadas/', blank=True, null=True)
+    portada_preset = models.CharField(max_length=50, blank=True, default='')
 
     def __str__(self):
         return f'Perfil de {self.usuario.username}'
-
 
 # Crear perfil automáticamente al crear un usuario
 @receiver(post_save, sender=User)
