@@ -32,8 +32,7 @@
                     </p>
                 </div>
                 <div class="card-footer bg-transparent border-0 pt-0 pb-3 px-3">
-                    <form method="post" action="{% url 'eliminar_tablero' t.pk %}"
-                          class="form-eliminar">
+                    <form method="post" action="{% url 'eliminar_tablero' t.pk %}" class="form-eliminar">
                         {% csrf_token %}
                         <button type="submit" class="btn btn-sm btn-outline-danger w-100">
                             <i class="bi bi-trash me-1"></i> Eliminar
@@ -55,7 +54,6 @@
         </button>
     </div>
 {% endif %}
-
 
 <!-- Modal nuevo tablero -->
 <div class="modal fade" id="modalNuevoTablero" tabindex="-1">
@@ -79,6 +77,32 @@
             </div>
         </div>
     </div>
+</div>
+
+<!-- ✅ Modal confirmación eliminar -->
+<div class="modal fade" id="modalConfirmEliminar" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header border-0 pb-0">
+        <h5 class="modal-title fw-bold text-danger">
+          <i class="bi bi-exclamation-triangle me-2"></i>Eliminar tablero
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+
+      <div class="modal-body">
+        <p class="mb-1">¿Eliminar este tablero?</p>
+        <p class="text-muted mb-0">Esta acción no se puede deshacer.</p>
+      </div>
+
+      <div class="modal-footer border-0">
+        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
+        <button type="button" class="btn btn-danger" id="btnConfirmEliminar">
+          <i class="bi bi-trash me-1"></i> Eliminar
+        </button>
+      </div>
+    </div>
+  </div>
 </div>
 
 {% endblock %}

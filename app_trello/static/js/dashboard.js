@@ -1,24 +1,49 @@
 document.addEventListener('DOMContentLoaded', () => {
 
-    // Navegar al tablero al hacer click en la card
-    document.querySelectorAll('.card[data-url]').forEach(card => {
-        card.addEventListener('click', () => {
-            window.location = card.dataset.url;
-        });
+ 
+  document.querySelectorAll('.card[data-url]').forEach(card => {
+    card.addEventListener('click', () => {
+      window.location = card.dataset.url;
+    });
+  });
+
+  
+  const modalEl = document.getElementById('modalConfirmEliminar');
+  const btnConfirm = document.getElementById('btnConfirmEliminar');
+
+  
+  if (!modalEl || !btnConfirm) return;
+
+  const modal = new bootstrap.Modal(modalEl);
+  let formPendiente = null;
+
+  document.querySelectorAll('.form-eliminar').forEach(form => {
+
+    
+    form.addEventListener('click', (e) => {
+      e.stopPropagation();
     });
 
-    // Evitar que el click en el botón Eliminar navegue al tablero
-    document.querySelectorAll('.form-eliminar').forEach(form => {
-        form.addEventListener('click', e => {
-            e.stopPropagation();
-        });
+    
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();     
+      e.stopPropagation();
 
-        form.addEventListener('submit', e => {
-            e.stopPropagation();
-            if (!confirm('¿Eliminar este tablero? Esta acción no se puede deshacer.')) {
-                e.preventDefault();
-            }
-        });
+      formPendiente = form;   
+      modal.show();          
     });
+  });
+
+  // Confirmar eliminación
+  btnConfirm.addEventListener('click', () => {
+    if (formPendiente) {
+      formPendiente.submit();
+    }
+  });
+
+  // Limpieza al cerrar modal
+  modalEl.addEventListener('hidden.bs.modal', () => {
+    formPendiente = null;
+  });
 
 });
