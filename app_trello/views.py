@@ -7,8 +7,7 @@ from django.http import JsonResponse
 from django.views.decorators.http import require_POST
 from django.contrib import messages
 import json
-
-from .models import Tablero, Lista, Tarjeta, Perfil
+from .models import Tablero, Lista, TableroPortadaHistorial, Tarjeta, Perfil
 
 
 # ── AUTH ──────────────────────────────────
@@ -67,7 +66,14 @@ def eliminar_tablero(request, pk):
 def tablero(request, pk):
     t = get_object_or_404(Tablero, pk=pk, propietario=request.user)
     listas = t.listas.prefetch_related('tarjetas')
-    return render(request, 'tablero.html', {'tablero': t, 'listas': listas})
+
+    historial_portadas = t.portadas_historial.all()[:6]
+
+    return render(request, 'tablero.html', {
+        'tablero': t,
+        'listas': listas,
+        'historial_portadas': historial_portadas,
+    })
 
 
 # ── FONDO / PORTADA DE TABLERO ─────────────────────────
@@ -76,11 +82,21 @@ def tablero(request, pk):
 @require_POST
 def tablero_portada_subir(request, pk):
     t = get_object_or_404(Tablero, pk=pk, propietario=request.user)
+
     if "portada" in request.FILES:
-        # si había preset, lo limpias
+        archivo = request.FILES["portada"]
+
+        # guardar en historial
+        TableroPortadaHistorial.objects.create(
+            tablero=t,
+            imagen=archivo
+        )
+
+        # usar como portada actual
         t.portada_preset = ""
-        t.portada = request.FILES["portada"]
+        t.portada = archivo
         t.save()
+
     return redirect("tablero", pk=pk)
 
 
@@ -108,11 +124,23 @@ def tablero_portada_preset(request, pk):
 @require_POST
 def tablero_portada_eliminar(request, pk):
     t = get_object_or_404(Tablero, pk=pk, propietario=request.user)
-    if t.portada:
-        t.portada.delete(save=False)
-        t.portada = None
+
+    t.portada = None
     t.portada_preset = ""
     t.save()
+
+    return redirect("tablero", pk=pk)
+
+@login_required
+@require_POST
+def tablero_portada_usar_historial(request, pk, img_id):
+    t = get_object_or_404(Tablero, pk=pk, propietario=request.user)
+    item = get_object_or_404(TableroPortadaHistorial, pk=img_id, tablero=t)
+
+    t.portada_preset = ""
+    t.portada = item.imagen
+    t.save()
+
     return redirect("tablero", pk=pk)
 
 # ── LISTAS ────────────────────────────────

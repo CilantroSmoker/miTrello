@@ -206,7 +206,7 @@
       </div>
     </div>
 
-    <!-- ✅ Modal confirmación eliminar -->
+    <!--  Modal confirmación eliminar -->
     <div class="modal fade" id="modalConfirmEliminar" tabindex="-1" aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content" style="border-radius:16px; border:none;">
@@ -233,7 +233,6 @@
       </div>
     </div>
 
-    <!-- ✅ Offcanvas: Cambiar fondo -->
     <!-- ───────────────── OFFCANVAS: MENÚ ───────────────── -->
 <div class="offcanvas offcanvas-end board-menu" tabindex="-1" id="offcanvasMenu">
   <div class="offcanvas-header">
@@ -269,7 +268,6 @@
 
       <div class="small text-uppercase text-muted px-2 mb-1">Configuración</div>
 
-      <!-- Cambiar fondo: abre el submenú -->
       <button type="button"
               class="list-group-item list-group-item-action board-menu-item"
               data-bs-toggle="offcanvas"
@@ -285,7 +283,6 @@
 <div class="offcanvas offcanvas-end board-menu" tabindex="-1" id="offcanvasFondo">
   <div class="offcanvas-header">
     <div class="d-flex align-items-center gap-2">
-      <!-- Volver al menú -->
       <button class="btn btn-sm btn-outline-light"
               type="button"
               data-bs-toggle="offcanvas"
@@ -305,27 +302,31 @@
 
       <form method="post" action="{% url 'tablero_portada_preset' tablero.pk %}">
         {% csrf_token %}
-        <button class="preset-thumb preset-bg1" name="preset" value="preset-1"
-                type="submit" title="Preset 1"></button>
+        <button class="preset-thumb preset-bg1"
+                name="preset"
+                value="preset-1"
+                type="submit"
+                title="Preset 1"></button>
       </form>
 
       <form method="post" action="{% url 'tablero_portada_preset' tablero.pk %}">
         {% csrf_token %}
-        <button class="preset-thumb preset-bg2" name="preset" value="preset-2"
-                type="submit" title="Preset 2"></button>
+        <button class="preset-thumb preset-bg2"
+                name="preset"
+                value="preset-2"
+                type="submit"
+                title="Preset 2"></button>
       </form>
 
     </div>
 
     <div class="mb-2 fw-semibold">Subir imagen</div>
 
-    <!-- FORM NUEVO: CUADRO + -->
     <form id="coverForm"
           method="post"
           action="{% url 'tablero_portada_subir' tablero.pk %}"
           enctype="multipart/form-data"
           class="mb-3">
-
       {% csrf_token %}
 
       <input id="coverInput"
@@ -338,8 +339,26 @@
         <div class="cover-plus">+</div>
         <div class="cover-text">Subir fondo</div>
       </label>
-
     </form>
+
+    <div class="mb-2 fw-semibold">Tus imágenes</div>
+    <div class="d-flex gap-2 flex-wrap mb-3">
+      {% for h in historial_portadas %}
+        {% if h.imagen %}
+          <form method="post" action="{% url 'tablero_portada_usar_historial' tablero.pk h.pk %}">
+            {% csrf_token %}
+            <button
+              type="submit"
+              class="preset-thumb"
+              style="background-image: url('{{ h.imagen.url }}');"
+              title="Usar esta imagen">
+            </button>
+          </form>
+        {% endif %}
+      {% empty %}
+        <p class="text-muted small mb-0">Aún no has subido imágenes.</p>
+      {% endfor %}
+    </div>
 
     <form method="post" action="{% url 'tablero_portada_eliminar' tablero.pk %}">
       {% csrf_token %}
@@ -350,6 +369,7 @@
 
   </div>
 </div>
+
   </div> <!-- /board-content -->
 </div> <!-- /board-shell -->
 

@@ -8,6 +8,7 @@ from app_trello.views import (
     crear_tarjeta, eliminar_tarjeta, detalle_tarjeta, editar_tarjeta,
     mover_tarjeta, perfil,
     tablero_portada_subir, tablero_portada_preset, tablero_portada_eliminar,
+    tablero_portada_usar_historial,
 )
 from django.conf import settings
 from django.conf.urls.static import static
@@ -35,6 +36,7 @@ urlpatterns = [
     path("tablero/<int:pk>/portada/subir/", tablero_portada_subir, name="tablero_portada_subir"),
     path("tablero/<int:pk>/portada/preset/", tablero_portada_preset, name="tablero_portada_preset"),
     path("tablero/<int:pk>/portada/eliminar/", tablero_portada_eliminar, name="tablero_portada_eliminar"),
+    path("tablero/<int:pk>/portada/historial/<int:img_id>/usar/",tablero_portada_usar_historial,name="tablero_portada_usar_historial"),
 
     path('lista/<int:lista_pk>/tarjeta/crear/', crear_tarjeta, name='crear_tarjeta'),
     path('tarjeta/<int:pk>/eliminar/', eliminar_tarjeta, name='eliminar_tarjeta'),
